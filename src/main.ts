@@ -1,8 +1,12 @@
 import express, { Express } from "express"
 import mongoose from "mongoose"
 import cors from "cors"
-import todoRoutes from "./routes"
+import postRoutes from "./routes/posts"
+import userRoutes from "./routes/users"
 import bodyParser from "body-parser"
+
+import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+dotenv.config({ path: `.env.${process.env.NODE_ENV}` })
 
 const app: Express = express()
 
@@ -16,10 +20,12 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 
-app.use(todoRoutes)
+app.use(postRoutes)
+app.use(userRoutes)
 
 // const uri: string = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@clustertodo.raz9g.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`
-const localUri: string = "mongodb://127.0.0.1:27017/demo"
+const localUri: string = `mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`
+
 mongoose
   .connect(localUri)
   .then(() =>

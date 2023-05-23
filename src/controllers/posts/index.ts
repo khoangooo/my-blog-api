@@ -23,12 +23,12 @@ const getPost = async (req: Request, res: Response): Promise<void> => {
 
 const addPost = async (req: Request, res: Response): Promise<void> => {
   try {
-    const body = req.body as Pick<IPost, "name" | "description" | "status">
-    console.log(req.body)
+    const body = req.body as Pick<IPost, "title" | "excerpt" | "content">
+
     const post: IPost = new Post({
-      name: body.name,
-      description: body.description,
-      status: body.status,
+      title: body.title,
+      excerpt: body.excerpt,
+      content: body.content,
     })
 
     const newPost: IPost = await post.save()

@@ -1,24 +1,13 @@
 import { IPost } from "../types/posts"
 import { model, Schema } from "mongoose"
 
-const todoSchema: Schema = new Schema(
+const postSchema: Schema = new Schema(
   {
-    name: {
-      type: String,
-      required: true,
-    },
-
-    description: {
-      type: String,
-      required: true,
-    },
-
-    status: {
-      type: Boolean,
-      required: true,
-    },
+    title: { type: String, required: true, },
+    excerpt: { type: String },
+    content: { type: String, required: true, },
   },
   { timestamps: true }
 )
 
-export default model<IPost>("Post", todoSchema)
+export default model<IPost>("Post", postSchema)
