@@ -5,8 +5,9 @@ import bcrypt from "bcrypt";
 
 const getUser = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { body: { email, password } } = req;
-    const user: IUser | null = await User.findOne({ email });
+    const { body: { username, password } } = req;
+    const user: IUser | null = await User.findOne({ username });
+
     if (user?.password) {
       bcrypt.compare(password, user.password, function(err, result) {
         if(result){
