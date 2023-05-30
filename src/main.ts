@@ -23,12 +23,12 @@ app.use(bodyParser.json())
 app.use('/api/v1', postRoutes);
 app.use('/api/v1', userRoutes);
 
-const myLogger = function (req: Request, res: Response, next: NextFunction) {
-  console.log('LOGGED', req.method, new Date())
-  next()
-}
+// const myLogger = function (req: Request, res: Response, next: NextFunction) {
+//   console.log('LOGGED', req.method, new Date())
+//   next()
+// }
 
-app.use(myLogger)
+// app.use(myLogger)
 
 // const uri: string = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@clustertodo.raz9g.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`
 const localUri: string = `mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`

@@ -1,13 +1,14 @@
 import { Response, Request } from "express"
-import { IPost } from "../../types/posts"
-import Post from "../../models/post"
+import { IPost } from "../types/posts"
+import Post from "../models/post"
+import { getErrorMessage } from "@/utils"
 
 const getPosts = async (req: Request, res: Response): Promise<void> => {
   try {
     const posts: IPost[] = await Post.find()
     res.status(200).json({ posts })
   } catch (error) {
-    throw error
+    res.status(500).send(getErrorMessage(error));
   }
 }
 
@@ -17,7 +18,7 @@ const getPost = async (req: Request, res: Response): Promise<void> => {
     const post: IPost | null = await Post.findById(id)
     res.status(200).json({ post })
   } catch (error) {
-    throw error
+    res.status(500).send(getErrorMessage(error));
   }
 }
 
@@ -38,7 +39,7 @@ const addPost = async (req: Request, res: Response): Promise<void> => {
       .status(201)
       .json({ message: "Post added", post: newPost, posts: allPosts })
   } catch (error) {
-    throw error
+    res.status(500).send(getErrorMessage(error));
   }
 }
 
@@ -59,7 +60,7 @@ const updatePost = async (req: Request, res: Response): Promise<void> => {
       posts: allPosts,
     })
   } catch (error) {
-    throw error
+    res.status(500).send(getErrorMessage(error));
   }
 }
 
@@ -75,8 +76,10 @@ const deletePost = async (req: Request, res: Response): Promise<void> => {
       posts: allPosts,
     })
   } catch (error) {
-    throw error
+    res.status(500).send(getErrorMessage(error));
   }
 }
 
-export { getPosts, getPost, addPost, updatePost, deletePost }
+const PostsController = { getPosts, getPost, addPost, updatePost, deletePost }
+
+export default PostsController;

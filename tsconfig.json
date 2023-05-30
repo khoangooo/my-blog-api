@@ -22,11 +22,11 @@
     "moduleResolution": "Node",
     "skipLibCheck": true,
     "paths": {
-      "@routes/*": [
-        "./src/routes/*"
+      "@": [
+        "./src"
       ],
-      "@controllers/*": [
-        "./src/controllers/*"
+      "@/*": [
+        "./src/*"
       ]
     }
   },
