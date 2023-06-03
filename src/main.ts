@@ -6,6 +6,7 @@ import userRoutes from "./routes/users"
 import bodyParser from "body-parser"
 
 import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+import cookieParser from "cookie-parser"
 dotenv.config({ path: `.env.${process.env.NODE_ENV}` })
 
 const app: Express = express()
@@ -19,6 +20,9 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 // parse application/json
 app.use(bodyParser.json())
+
+// parse cookies
+app.use(cookieParser());
 
 app.use('/api/v1', postRoutes);
 app.use('/api/v1', userRoutes);
