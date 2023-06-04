@@ -7,4 +7,5 @@ export interface IUser extends Document {
   avatar?: string;
   password: string;
   token: string;
+  timeout: number;
 }

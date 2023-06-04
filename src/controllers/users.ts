@@ -13,6 +13,7 @@ const getUser = async (req: Request, res: Response): Promise<void> => {
       bcrypt.compare(password, user.password, function (err, result) {
         if (result) {
           const newUser = user.toObject() as Partial<IUser>;
+          newUser.timeout = new Date().getSeconds();
           delete newUser.password;
           const { accessToken, refreshToken } = login(newUser);
           
