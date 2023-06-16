@@ -13,10 +13,15 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
       throw new Error();
     }
 
-    const secretKey = process.env.JWT_REFRESH_TOKEN_SECRET_KEY as Secret;
+    const secretKey = process.env.JWT_ACCESS_TOKEN_SECRET_KEY as Secret;
     const decoded = jwt.verify(token, secretKey);
-    (req as CustomRequest).token = decoded;
-    next();
+    if (decoded) {
+      res.locals.user = decoded;
+      next();
+    } else {
+      res.status(401).send('Invalid token');
+    }
+
   } catch (err) {
     res.status(401).send('Please authenticate');
   }

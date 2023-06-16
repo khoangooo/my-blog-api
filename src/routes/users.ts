@@ -5,7 +5,8 @@ import { auth } from "@/middlewares/auth";
 const router: Router = Router()
 
 router
-  .post("/me", UsersController.getUser)
-  .post("/me/refresh", auth, UsersController.getUser)
+  .post("/login", UsersController.login)
+  .get("/me", auth, UsersController.getUser)
+  .post("/refresh", auth, UsersController.refresh)
 
 export default router
