@@ -32,7 +32,7 @@ const login = async (req: Request, res: Response): Promise<void> => {
             maxAge: parseInt(REFRESH_TOKEN_EXPIRES_IN) * 24 * 60 * 60 * 1000 // 30 days
           });
 
-          res.status(200).json({ status: true, data: { accessToken, timeout: Date.now() } });
+          res.status(200).json({ status: true, data: { token: accessToken, timeout: Date.now() } });
         } else {
           res.status(401).json({ status: false, message: 'Passwords do not match' });
         }
@@ -88,7 +88,7 @@ const refresh = async (req: Request, res: Response): Promise<void> => {
     }
 
     const accessToken = jwt.sign(decoded, accessTokenSecretKey, { expiresIn: ACCESS_TOKEN_EXPIRES_IN + "m" });
-    res.status(200).json({ status: true, data: { accessToken, refreshToken, timeout: Date.now() } });
+    res.status(200).json({ status: true, data: { token: accessToken, refreshToken, timeout: Date.now() } });
 
   } catch (error) {
     res.status(500).send(getErrorMessage(error));
