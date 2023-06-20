@@ -7,6 +7,7 @@ const router: Router = Router()
 router
   .post("/login", UsersController.login)
   .get("/me", auth, UsersController.getUser)
-  .post("/refresh", auth, UsersController.refresh)
+  .get("/refresh", auth, UsersController.refresh)
+  .post("/register", UsersController.register)
 
 export default router

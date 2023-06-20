@@ -3,10 +3,11 @@ import { IUser } from "@/types/users"
 import User from "@/models/user";
 import bcrypt from "bcrypt";
 import { getErrorMessage } from "@/utils";
-import jwt, { Jwt, JwtPayload, Secret, VerifyErrors } from "jsonwebtoken";
+import jwt, { Secret } from "jsonwebtoken";
 
 const ACCESS_TOKEN_EXPIRES_IN = "10"; //mins
 const REFRESH_TOKEN_EXPIRES_IN = "30"; //days
+const NUM_SALT_ROUNDS = 10;
 
 const login = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -57,6 +58,24 @@ const getUser = async (req: Request, res: Response): Promise<void> => {
   }
 }
 
+const register = async (req: Request, res: Response): Promise<void> => {
+  try {
+    if (await User.findOne({ username: req.body.username })) {
+      res.status(409).json({ status: false, message: 'User is existed' });
+      return;
+    }
+
+    const hash = await bcrypt.hash(req.body.password, NUM_SALT_ROUNDS);
+    const user = (await User.create({ ...req.body, password: hash })).toJSON();
+    const data: Omit<IUser, "password"> = user;
+
+    res.status(200).json({ status: true, data });
+
+  } catch (error) {
+    res.status(500).send(getErrorMessage(error));
+  }
+}
+
 const refresh = async (req: Request, res: Response): Promise<void> => {
   try {
     const refreshToken = req.cookies.refreshToken;
@@ -76,6 +95,6 @@ const refresh = async (req: Request, res: Response): Promise<void> => {
   }
 }
 
-const UsersController = { login, refresh, getUser }
+const UsersController = { login, refresh, getUser, register }
 
 export default UsersController;

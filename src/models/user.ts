@@ -5,7 +5,7 @@ const userSchema: Schema = new Schema(
   {
     name: {
       type: String,
-      required: true
+      required: true,
     },
     username: {
       type: String,
@@ -14,15 +14,20 @@ const userSchema: Schema = new Schema(
     },
     email: {
       type: String,
-      required: true
+      required: true,
+      index: { unique: true }
     },
     avatar: String,
     password: {
       type: String,
       required: true
+    },
+    role: {
+      type: String,
+      required: true
     }
   },
-  { timestamps: true }
+  { timestamps: true },
 )
 
 export default model<IUser>("User", userSchema)
