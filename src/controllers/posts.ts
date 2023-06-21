@@ -6,7 +6,7 @@ import { getErrorMessage } from "@/utils"
 const getPosts = async (req: Request, res: Response): Promise<void> => {
   try {
     const posts: IPost[] = await Post.find()
-    res.status(200).json({ posts })
+    res.status(200).json({ status: true, data: posts })
   } catch (error) {
     res.status(500).send(getErrorMessage(error));
   }
@@ -16,7 +16,7 @@ const getPost = async (req: Request, res: Response): Promise<void> => {
   try {
     const { params: { id } } = req
     const post: IPost | null = await Post.findById(id)
-    res.status(200).json({ post })
+    res.status(200).json({ status: true, data: post })
   } catch (error) {
     res.status(500).send(getErrorMessage(error));
   }
@@ -37,7 +37,7 @@ const addPost = async (req: Request, res: Response): Promise<void> => {
 
     res
       .status(201)
-      .json({ message: "Post added", post: newPost, posts: allPosts })
+      .json({ message: "Post added" })
   } catch (error) {
     res.status(500).send(getErrorMessage(error));
   }
@@ -57,7 +57,6 @@ const updatePost = async (req: Request, res: Response): Promise<void> => {
     res.status(200).json({
       message: "Post updated",
       post: updatePost,
-      posts: allPosts,
     })
   } catch (error) {
     res.status(500).send(getErrorMessage(error));
@@ -73,7 +72,6 @@ const deletePost = async (req: Request, res: Response): Promise<void> => {
     res.status(200).json({
       message: "Post deleted",
       post: deletedPost,
-      posts: allPosts,
     })
   } catch (error) {
     res.status(500).send(getErrorMessage(error));
