@@ -5,7 +5,7 @@ import { getErrorMessage } from "@/utils"
 
 const getPosts = async (req: Request, res: Response): Promise<void> => {
   try {
-    const posts: IPost[] = await Post.find({}, {_id: 0})
+    const posts: IPost[] = await Post.find()
     res.status(200).json({ status: true, data: posts })
   } catch (error) {
     res.status(500).send(getErrorMessage(error));
