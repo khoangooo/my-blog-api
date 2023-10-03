@@ -106,6 +106,20 @@ const refresh = async (req: Request, res: Response): Promise<void> => {
   }
 }
 
-const UsersController = { login, refresh, getUser, register }
+const logout = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const user = res.locals.user;
+    if (user) {
+      res.clearCookie('refreshToken')
+      res.status(200).json({ status: true, message: 'Logout successfully' });
+    } else {
+      res.status(404).json({ status: false, message: 'Logout failed' })
+    }
+  } catch (error) {
+    res.status(500).send(getErrorMessage(error));
+  }
+}
+
+const UsersController = { login, refresh, getUser, register, logout }
 
 export default UsersController;

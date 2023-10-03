@@ -9,5 +9,6 @@ router
   .get("/me", auth, UsersController.getUser)
   .get("/refresh", auth, UsersController.refresh)
   .post("/register", UsersController.register)
+  .get("/logout", auth, UsersController.logout)
 
 export default router
