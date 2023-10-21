@@ -11,8 +11,8 @@ const NUM_SALT_ROUNDS = 10;
 
 const login = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { body: { username, password } } = req;
-    const user: IUser | null = await User.findOne({ username });
+    const { body: { email, password } } = req;
+    const user: IUser | null = await User.findOne({ email });
 
     if (user?.password) {
       const match = await bcrypt.compare(password, user.password);
