@@ -9,6 +9,8 @@ const ACCESS_TOKEN_EXPIRES_IN = "10"; //mins
 const REFRESH_TOKEN_EXPIRES_IN = "30"; //days
 const NUM_SALT_ROUNDS = 10;
 
+const refreshTokens: any = {};
+
 const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { body: { email, password } } = req;
@@ -25,17 +27,19 @@ const login = async (req: Request, res: Response): Promise<void> => {
         const accessToken = jwt.sign(data, accessTokenSecretKey, { expiresIn: ACCESS_TOKEN_EXPIRES_IN + "m" })
         const refreshToken = jwt.sign(data, refreshTokenSecretKey, { expiresIn: REFRESH_TOKEN_EXPIRES_IN + "days" })
 
-        res.cookie('refreshToken', refreshToken, {
-          httpOnly: true,
-          sameSite: 'none',
-          secure: true,
-          maxAge: parseInt(REFRESH_TOKEN_EXPIRES_IN) * 24 * 60 * 60 * 1000 // 30 days
-        });
+        const response = {
+          "status": "Logged in",
+          "token": accessToken,
+          "refreshToken": refreshToken,
+        }
+
+        refreshTokens[refreshToken] = response;
 
         res.status(200).json({
           status: true,
           data: {
             token: accessToken,
+            refreshToken,
             timeout: Date.now() + parseInt(ACCESS_TOKEN_EXPIRES_IN) * 60 * 1000
           }
         });
@@ -83,43 +87,37 @@ const register = async (req: Request, res: Response): Promise<void> => {
 
 const refresh = async (req: Request, res: Response): Promise<void> => {
   try {
-    const refreshToken = req.cookies.refreshToken;
-    const accessTokenSecretKey = process.env.JWT_ACCESS_TOKEN_SECRET_KEY as Secret;
-    const refreshTokenSecretKey = process.env.JWT_REFRESH_TOKEN_SECRET_KEY as Secret;
+    const refreshToken = req.body.refreshToken;
 
-    const decoded = jwt.verify(refreshToken, refreshTokenSecretKey);
-    if (!decoded) {
-      res.status(401).json({ status: false, message: 'Invalid refresh token' });
-    }
+    if (refreshToken && (refreshToken in refreshTokens)) {
+      const accessTokenSecretKey = process.env.JWT_ACCESS_TOKEN_SECRET_KEY as Secret;
+      const refreshTokenSecretKey = process.env.JWT_REFRESH_TOKEN_SECRET_KEY as Secret;
+      const decoded = jwt.verify(refreshToken, refreshTokenSecretKey);
 
-    const accessToken = jwt.sign(decoded, accessTokenSecretKey);
-    res.status(200).json({
-      status: true,
-      data: {
-        token: accessToken,
-        timeout: Date.now() + parseInt(ACCESS_TOKEN_EXPIRES_IN) * 60 * 1000
+      if (!decoded) {
+        res.status(401).json({ status: false, message: 'Invalid refresh token' });
       }
-    });
 
-  } catch (error) {
-    res.status(500).send(getErrorMessage(error));
-  }
-}
+      const accessToken = jwt.sign(decoded, accessTokenSecretKey);
 
-const logout = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const user = res.locals.user;
-    if (user) {
-      res.clearCookie('refreshToken')
-      res.status(200).json({ status: true, message: 'Logout successfully' });
+      // update the token in the list
+      refreshTokens[refreshToken].token = accessToken
+
+      res.status(200).json({
+        status: true,
+        data: {
+          token: accessToken,
+          timeout: Date.now() + parseInt(ACCESS_TOKEN_EXPIRES_IN) * 60 * 1000
+        }
+      });
     } else {
-      res.status(404).json({ status: false, message: 'Logout failed' })
+      res.status(404).send('Invalid request')
     }
   } catch (error) {
     res.status(500).send(getErrorMessage(error));
   }
 }
 
-const UsersController = { login, refresh, getUser, register, logout }
+const UsersController = { login, refresh, getUser, register }
 
 export default UsersController;
